@@ -1,2 +1,3 @@
-# advent-of-code-2022
-My submissions to the 2022 Advent of Code (https://adventofcode.com/2022)
+# Advent of Code 2022 Submissions
+
+My submissions for the 2022 Advent of Code (https://adventofcode.com/2022)
