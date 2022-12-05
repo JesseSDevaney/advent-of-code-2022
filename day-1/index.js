@@ -16,6 +16,35 @@ const elfHasCalories = separateElvesArr.map((items) => {
 });
 
 // find the elf with the largest number of calories
-const mostCalories = Math.max(...elfHasCalories);
+// const mostCalories = Math.max(...elfHasCalories);
 
-console.log(mostCalories);
+function sortedIndex(array, value) {
+  let low = 0;
+  let high = array.length;
+
+  while (low < high) {
+      const mid = (low + high) >>> 1;
+      if (array[mid] < value) low = mid + 1;
+      else high = mid;
+  }
+  return low;
+}
+
+// top three elf's total calories sorted from smallest to largest
+const topThreeElves = Array(3).fill(0);
+
+elfHasCalories.forEach((calories) => {
+  if(calories <= topThreeElves[0]) return;
+
+  // insert element in the new top three
+  const insertIndex = sortedIndex(topThreeElves, calories);
+  topThreeElves.splice(insertIndex, 0, calories);
+
+  // remove smallest element
+  topThreeElves.shift();
+});
+
+console.log(topThreeElves);
+
+const topThreeTotal = topThreeElves.reduce((sum, val) => sum + val);
+console.log(topThreeTotal);
