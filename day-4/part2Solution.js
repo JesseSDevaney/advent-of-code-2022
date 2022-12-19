@@ -30,9 +30,7 @@ function isOverlapping(firstRange, secondRange) {
   return isOverLapping;
 }
 
-const pairsAreOverlapping = pairedRanges.map((pair) => {
-  return isOverlapping(...pair);
-});
+const pairsAreOverlapping = pairedRanges.map((pair) => isOverlapping(...pair));
 
 const numOverLapping = pairsAreOverlapping.reduce((sum, currVal) => {
   if (currVal === true) return sum + 1;
