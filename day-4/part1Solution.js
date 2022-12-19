@@ -25,15 +25,12 @@ function isFullyContained(firstRange, secondRange) {
   const firstRangeFullyContainsSecondRange = min1 <= min2 && max1 >= max2;
   const secondRangeFullyContainsFirstRange = min2 <= min1 && max2 >= max1;
 
-  if (firstRangeFullyContainsSecondRange) return true;
-  if (secondRangeFullyContainsFirstRange) return true;
-
-  return false;
+  return (
+    firstRangeFullyContainsSecondRange|| secondRangeFullyContainsFirstRange
+  );
 }
 
-const pairsAreFullyContained = pairedRanges.map((pair) => {
-  return isFullyContained(...pair);
-});
+const pairsAreFullyContained = pairedRanges.map((pair) => isFullyContained(...pair));
 
 const numFullyContained = pairsAreFullyContained.reduce((sum, currVal) => {
   if (currVal === true) return sum + 1;
