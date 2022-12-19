@@ -1,8 +1,5 @@
 import * as fs from "node:fs";
 
-const input = fs.readFileSync("./puzzleInput.txt", "utf-8");
-const [cratesInput, instructionsInput] = input.split("\n\n\n");
- 
 // turn crate input into stacks (arrays) of crates
 // where each index represents a stack (array)
 // and each index inside the stack represents a crate
@@ -19,7 +16,6 @@ function parseCratesInput(setupInput) {
 
   return stacks;
 }
-const startingStacks = parseCratesInput(cratesInput);
 
 // parse instructions into cell separated instructions 
 // {numCratesToMove, FromStack, ToStack}
@@ -40,8 +36,6 @@ function parseInstructions(instructionsInput) {
 
   return instructionsArr;
 }
-
-const instructions = parseInstructions(instructionsInput);
 
 function clone2DArray(arr) {
   return arr.map((item) => (
@@ -68,16 +62,6 @@ function moveCrates(stacks, numToMove, from, to) {
   return stacksCopy;
 }
 
-const stacksAfterInstructions = instructions.reduce(
-  (currStacks, nextInstructions) => {
-    const numToMove = nextInstructions.get("numToMove");
-    const from = nextInstructions.get("from");
-    const to = nextInstructions.get("to");
-
-    return moveCrates(currStacks, numToMove, from, to);
-  },
-  startingStacks);
-
 function getTopOfStacks(stacks) {
   return (
     stacks
@@ -87,6 +71,23 @@ function getTopOfStacks(stacks) {
       "")
   );
 }
+
+
+const input = fs.readFileSync("./puzzleInput.txt", "utf-8");
+const [cratesInput, instructionsInput] = input.split("\n\n\n");
+
+const startingStacks = parseCratesInput(cratesInput);
+const instructions = parseInstructions(instructionsInput);
+
+const stacksAfterInstructions = instructions.reduce(
+  (currStacks, nextInstructions) => {
+    const numToMove = nextInstructions.get("numToMove");
+    const from = nextInstructions.get("from");
+    const to = nextInstructions.get("to");
+
+    return moveCrates(currStacks, numToMove, from, to);
+  },
+  startingStacks);
 
 const topOfStacks = getTopOfStacks(stacksAfterInstructions);
 console.log(topOfStacks);
