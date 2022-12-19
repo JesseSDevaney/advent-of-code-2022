@@ -4,16 +4,16 @@ import * as fs from "node:fs";
 const input = fs.readFileSync("./puzzleInput.txt", "utf-8");
 const ruckSacks = input.split("\n");
 
-// take an array, group the elements into groups of 3
+// take an array, group the elements into groups of N
 // return the grouped array
-function groupIntoThrees(items) {
+function groupIntoN(items, groupLength) {
   const groupArr = [];
   let groupAccumulator = [];
 
   items.forEach((item, index) => {
     groupAccumulator.push(item);
 
-    if (index % 3 === 2) {
+    if (index % 3 === (groupLength - 1)) {
       groupArr.push(groupAccumulator);
       groupAccumulator = [];
     }
@@ -22,7 +22,8 @@ function groupIntoThrees(items) {
   return groupArr;
 }
 
-const ruckSackGroups = groupIntoThrees(ruckSacks);
+// groups of three
+const ruckSackGroups = groupIntoN(ruckSacks, 3);
 
 // find the character that is present in all strings
 function getMatching(...strArr) {
