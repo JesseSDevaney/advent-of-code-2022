@@ -136,20 +136,19 @@ function getDirectorySizes(directory) {
     0
   );
 
+  sizeOfDirectory += sumOfDirectFiles;
+
   if (directory.childDirectories.length === 0) {
-    sizeOfDirectory = sumOfDirectFiles;
     return [{ name: directory.name, size: sizeOfDirectory }];
   }
 
   for (let childDirectory of directory.childDirectories) {
-    const childDirectorySize = getDirectorySizes(childDirectory);
-    directorySizes.push(...childDirectorySize);
+    const childDirectorySizes = getDirectorySizes(childDirectory);
+    sizeOfDirectory += childDirectorySizes[0].size;
+    directorySizes.unshift(...childDirectorySizes);
   }
 
-  sizeOfDirectory =
-    sumOfDirectFiles + directorySizes.reduce((acc, dir) => acc + dir.size, 0);
-
-  directorySizes.push({ name: directory.name, size: sizeOfDirectory });
+  directorySizes.unshift({ name: directory.name, size: sizeOfDirectory });
 
   return directorySizes;
 }
