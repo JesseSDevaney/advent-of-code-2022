@@ -127,16 +127,6 @@ function createFile(fileSize, fileName) {
   };
 }
 
-function getDirectoriesLessThanOrEqual(rootDirectory, sizeLimit) {
-  const directorySizes = getDirectorySizes(rootDirectory);
-
-  const filteredBySize = directorySizes.filter(
-    ({ name, size }) => size <= sizeLimit
-  );
-
-  return filteredBySize;
-}
-
 function getDirectorySizes(directory) {
   const directorySizes = [];
 
@@ -162,4 +152,12 @@ function getDirectorySizes(directory) {
   directorySizes.push({ name: directory.name, size: sizeOfDirectory });
 
   return directorySizes;
+}
+
+function getDirectoriesLessThanOrEqual(rootDirectory, sizeLimit) {
+  const directorySizes = getDirectorySizes(rootDirectory);
+
+  const filteredBySize = directorySizes.filter(({ size }) => size <= sizeLimit);
+
+  return filteredBySize;
 }
