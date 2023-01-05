@@ -6,14 +6,23 @@ const input = fs.readFileSync("./puzzleInput.txt", "utf-8");
 const commands = parseToCommands(input);
 
 const fileTree = buildFileTree(commands);
-const filteredDirectories = getDirectoriesLessThanOrEqual(fileTree, 100000);
 
-const sumOfFilteredDirectories = filteredDirectories.reduce(
-  (acc, dir) => acc + dir.size,
-  0
+const TOTAL_DISK_SPACE = 70000000;
+const SPACE_NEEDED = 30000000;
+
+const directorySizes = getDirectorySizes(fileTree);
+
+const rootSize = directorySizes[0].size;
+const freedSpace = TOTAL_DISK_SPACE - rootSize;
+const spaceRequiredToBeFreed = SPACE_NEEDED - freedSpace;
+
+const candidatesForDeletion = directorySizes.filter(
+  ({ size }) => size >= spaceRequiredToBeFreed
 );
+const candidateSizes = candidatesForDeletion.map(({ size }) => size);
+const smallestCandidate = Math.min(...candidateSizes);
 
-console.log(sumOfFilteredDirectories);
+console.log(smallestCandidate);
 
 // ******** FUNCTIONS **********
 // parse input to atomic commands with a standard format
@@ -136,28 +145,19 @@ function getDirectorySizes(directory) {
     0
   );
 
+  sizeOfDirectory += sumOfDirectFiles;
+
   if (directory.childDirectories.length === 0) {
-    sizeOfDirectory = sumOfDirectFiles;
     return [{ name: directory.name, size: sizeOfDirectory }];
   }
 
   for (let childDirectory of directory.childDirectories) {
-    const childDirectorySize = getDirectorySizes(childDirectory);
-    directorySizes.push(...childDirectorySize);
+    const childDirectorySizes = getDirectorySizes(childDirectory);
+    sizeOfDirectory += childDirectorySizes[0].size;
+    directorySizes.unshift(...childDirectorySizes);
   }
 
-  sizeOfDirectory =
-    sumOfDirectFiles + directorySizes.reduce((acc, dir) => acc + dir.size, 0);
-
-  directorySizes.push({ name: directory.name, size: sizeOfDirectory });
+  directorySizes.unshift({ name: directory.name, size: sizeOfDirectory });
 
   return directorySizes;
-}
-
-function getDirectoriesLessThanOrEqual(rootDirectory, sizeLimit) {
-  const directorySizes = getDirectorySizes(rootDirectory);
-
-  const filteredBySize = directorySizes.filter(({ size }) => size <= sizeLimit);
-
-  return filteredBySize;
 }
