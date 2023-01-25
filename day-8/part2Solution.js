@@ -6,17 +6,19 @@ const rows = input.split(/\n/);
 // matrix[row][col]
 const matrix = rows.map((row) => row.split(""));
 
-const isVisibleMatrix = matrix.map((row, rowIndex, arr2D) => {
+const scenicScoreMatrix = matrix.map((row, rowIndex, arr2D) => {
   return row.map((item, colIndex, colArr) =>
-    isVisible(rowIndex, colIndex, arr2D)
+    getScenicScore(rowIndex, colIndex, arr2D)
   );
 });
 
-const numVisible = isVisibleMatrix.reduce((agg, row) => {
-  return agg + row.reduce((rowAgg, val) => rowAgg + val, 0);
-}, 0);
+const flatScenicScoreMatrix = [];
+scenicScoreMatrix.forEach((row) => {
+  flatScenicScoreMatrix.push(...row);
+});
 
-console.log(numVisible);
+const largestScenicScore = Math.max(...flatScenicScoreMatrix);
+console.log(largestScenicScore);
 
 // * Goal: Find how many trees are visible from outside the grid?
 // *
@@ -25,91 +27,83 @@ console.log(numVisible);
 // *   (2) if it is taller than all remaining trees along the row or column
 // *       in either directions
 
-function isVisible(row, col, arr2D) {
+function getScenicScore(row, col, arr2D) {
   return (
-    isOnEdge(row, col, arr2D) ||
-    isVisibleFromLeft(row, col, arr2D) ||
-    isVisibleFromTop(row, col, arr2D) ||
-    isVisibleFromRight(row, col, arr2D) ||
-    isVisibleFromBottom(row, col, arr2D)
+    getScenicScoreLeft(row, col, arr2D) *
+    getScenicScoreTop(row, col, arr2D) *
+    getScenicScoreRight(row, col, arr2D) *
+    getScenicScoreBottom(row, col, arr2D)
   );
 }
 
-function isOnEdge(row, col, arr2D) {
-  const topEdge = 0;
-  const bottomEdge = arr2D.length - 1;
-  const leftEdge = 0;
-  const rightEdge = arr2D[row].length - 1;
-
-  const onEdge =
-    row === topEdge ||
-    row === bottomEdge ||
-    col === leftEdge ||
-    col === rightEdge;
-
-  return onEdge;
-}
-
-function isVisibleFromLeft(row, col, arr2D) {
+function getScenicScoreLeft(row, col, arr2D) {
   const height = arr2D[row][col];
   const leftEdge = 0;
+  let score = 0;
 
   let colLeft = col - 1;
   while (colLeft >= leftEdge) {
+    score++;
     if (arr2D[row][colLeft] >= height) {
-      return false;
+      break;
     }
 
     colLeft--;
   }
 
-  return true;
+  return score;
 }
 
-function isVisibleFromRight(row, col, arr2D) {
+function getScenicScoreRight(row, col, arr2D) {
   const height = arr2D[row][col];
   const rightEdge = arr2D[row].length - 1;
+  let score = 0;
 
   let colRight = col + 1;
   while (colRight <= rightEdge) {
+    score++;
     if (arr2D[row][colRight] >= height) {
-      return false;
+      break;
     }
 
     colRight++;
   }
 
-  return true;
+  return score;
 }
 
-function isVisibleFromTop(row, col, arr2D) {
+function getScenicScoreTop(row, col, arr2D) {
   const height = arr2D[row][col];
   const topEdge = 0;
+  let score = 0;
 
   let rowUp = row - 1;
   while (rowUp >= topEdge) {
+    score++;
     if (arr2D[rowUp][col] >= height) {
-      return false;
+      break;
     }
 
     rowUp--;
   }
 
-  return true;
+  return score;
 }
 
-function isVisibleFromBottom(row, col, arr2D) {
+function getScenicScoreBottom(row, col, arr2D) {
   const height = arr2D[row][col];
   const bottomEdge = arr2D.length - 1;
+  let score = 0;
 
   let rowDown = row + 1;
   while (rowDown <= bottomEdge) {
+    score++;
     if (arr2D[rowDown][col] >= height) {
-      return false;
+      break;
     }
 
     rowDown++;
   }
 
-  return true;
+  return score;
 }
