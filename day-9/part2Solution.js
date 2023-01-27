@@ -1,9 +1,5 @@
 import * as fs from "node:fs";
 
-// ***** CONSTANTS *****
-const HEAD = "head";
-const TAIL = "tail";
-
 // ***** Procedural code *****
 
 const input = fs.readFileSync("./puzzleInput.txt", "utf-8");
@@ -15,9 +11,9 @@ const movesTaken = input.split(/\n/).map((move) => {
   };
 });
 
-const simulationHistory = simulate(movesTaken);
+const simulationHistory = simulate(movesTaken, 10);
 
-const cellsVisitedByTail = getCellsVisited(TAIL, simulationHistory);
+const cellsVisitedByTail = getCellsVisitedByKnot(10, simulationHistory);
 
 const numCellsVisitedByTail = cellsVisitedByTail.size;
 
@@ -25,42 +21,30 @@ console.log(numCellsVisitedByTail);
 
 // ***** Functional code *****
 
-function simulate(moves) {
+function simulate(moves, numKnots) {
   const INITIAL_X = 0;
   const INITIAL_Y = 0;
 
-  let currHead = new Map([
-    ["x", INITIAL_X],
-    ["y", INITIAL_Y],
-  ]);
-  let currTail = new Map([
-    ["x", INITIAL_X],
-    ["y", INITIAL_Y],
-  ]);
+  let currKnots = [];
 
-  const simulationHistory = [
-    {
-      head: currHead,
-      tail: currTail,
-    },
-  ];
+  for (let knotCount = 1; knotCount <= numKnots; knotCount++) {
+    const newKnot = new Map([
+      ["x", INITIAL_X],
+      ["y", INITIAL_Y],
+    ]);
+    currKnots.push(newKnot);
+  }
 
-  for (const { direction, steps } of moves) {
+  const simulationHistory = [currKnots];
+
+  for (const { direction, steps } of movesy) {
     let stepsRemaining = steps;
     while (stepsRemaining > 0) {
-      const { nextHead, nextTail } = moveKnotsOneStep(
-        currHead,
-        currTail,
-        direction
-      );
+      const nextKnots = moveKnotsOneStep(currKnots, direction);
 
-      currHead = nextHead;
-      currTail = nextTail;
+      currKnots = nextKnots;
 
-      simulationHistory.push({
-        head: currHead,
-        tail: currTail,
-      });
+      simulationHistory.push(currKnots);
 
       stepsRemaining--;
     }
@@ -69,11 +53,20 @@ function simulate(moves) {
   return simulationHistory;
 }
 
-function moveKnotsOneStep(currHead, currTail, direction) {
-  const nextHead = moveHead(currHead, direction);
-  const nextTail = moveTail(currTail, nextHead);
+function moveKnotsOneStep(currKnots, direction) {
+  const nextKnots = [];
+  const nextHead = moveHead(currKnots[0], direction);
+  nextKnots.push(nextHead);
 
-  return { nextHead, nextTail };
+  for (let knot = 1; knot < currKnots.length; knot++) {
+    const nextHead = nextKnots[knot - 1];
+    const currTail = currKnots[knot];
+
+    const nextTail = moveTail(currTail, nextHead);
+    nextKnots.push(nextTail);
+  }
+
+  return nextKnots;
 }
 
 function moveHead(head, direction) {
@@ -119,11 +112,11 @@ function moveTail(currTail, nextHead) {
   return nextTail;
 }
 
-function getCellsVisited(knotType, history) {
+function getCellsVisitedByKnot(knotNumber, history) {
   const cellsVisited = new Set();
 
   for (let state of history) {
-    const knotState = state[knotType];
+    const knotState = state[knotNumber - 1];
     const stateStr = `(${knotState.get("x")},${knotState.get("y")})`;
     cellsVisited.add(stateStr);
   }
