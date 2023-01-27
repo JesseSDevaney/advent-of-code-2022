@@ -19,7 +19,9 @@ const simulationHistory = simulate(movesTaken);
 
 const cellsVisitedByTail = getCellsVisited(TAIL, simulationHistory);
 
-console.log(cellsVisitedByTail);
+const numCellsVisitedByTail = cellsVisitedByTail.size;
+
+console.log(numCellsVisitedByTail);
 
 // ***** Functional code *****
 
