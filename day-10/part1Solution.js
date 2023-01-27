@@ -21,3 +21,49 @@ const cpuInstructions = input.split(/\n/).map((line) => {
   };
 });
 
+const cycleHistory = simulateInstructions(cpuInstructions);
+
+// ***** Functional Code *****
+
+function simulateInstructions(instructions) {
+  let currState = new Map([
+    ["X", 1],
+    ["cycle", 1],
+  ]);
+
+  const simulationHistory = [currState];
+
+  for (const instruction of instructions) {
+    const nextCycles = computeInstruction(currState, instruction);
+
+    simulationHistory.push(...nextCycles);
+
+    currState = simulationHistory.at(-1);
+  }
+
+  return simulationHistory;
+}
+
+function computeInstruction(currState, instruction) {
+  if (instruction.type === NOOP) return computeNOOP(currState);
+  if (instruction.type === ADD_X)
+    return computeAddX(currState, instruction.value);
+}
+
+function computeNOOP(currState) {
+  const nextState = new Map(currState);
+  nextState.set("cycle", currState.get("cycle") + 1);
+
+  return [nextState];
+}
+
+function computeAddX(currState, value) {
+  const firstCycle = new Map(currState);
+  firstCycle.set("cycle", currState.get("cycle") + 1);
+
+  const secondCycle = new Map(firstCycle);
+  secondCycle.set("cycle", firstCycle.get("cycle") + 1);
+  secondCycle.set("X", firstCycle.get("X") + value);
+
+  return [firstCycle, secondCycle];
+}
