@@ -40,8 +40,8 @@ function simulate(moves) {
 
   const simulationHistory = [
     {
-      head: currHead,
-      tail: currTail,
+      [HEAD]: currHead,
+      [TAIL]: currTail,
     },
   ];
 
@@ -58,8 +58,8 @@ function simulate(moves) {
       currTail = nextTail;
 
       simulationHistory.push({
-        head: currHead,
-        tail: currTail,
+        [HEAD]: currHead,
+        [TAIL]: currTail,
       });
 
       stepsRemaining--;
