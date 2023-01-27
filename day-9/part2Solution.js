@@ -3,7 +3,7 @@ import * as fs from "node:fs";
 // ***** Procedural code *****
 
 const input = fs.readFileSync("./puzzleInput.txt", "utf-8");
-const movesTaken = input.split(/\n/).map((move) => {
+const headMoves = input.split(/\n/).map((move) => {
   const [direction, steps] = move.split(/\s/);
   return {
     direction,
@@ -11,7 +11,7 @@ const movesTaken = input.split(/\n/).map((move) => {
   };
 });
 
-const simulationHistory = simulate(movesTaken, 10);
+const simulationHistory = simulate(headMoves, 10);
 
 const cellsVisitedByTail = getCellsVisitedByKnot(10, simulationHistory);
 
@@ -21,7 +21,7 @@ console.log(numCellsVisitedByTail);
 
 // ***** Functional code *****
 
-function simulate(moves, numKnots) {
+function simulate(headMoves, numKnots) {
   const INITIAL_X = 0;
   const INITIAL_Y = 0;
 
@@ -37,7 +37,7 @@ function simulate(moves, numKnots) {
 
   const simulationHistory = [currKnots];
 
-  for (const { direction, steps } of movesy) {
+  for (const { direction, steps } of headMoves) {
     let stepsRemaining = steps;
     while (stepsRemaining > 0) {
       const nextKnots = moveKnotsOneStep(currKnots, direction);
