@@ -5,6 +5,9 @@ import * as fs from "node:fs";
 const NOOP = "noop";
 const ADD_X = "addx";
 
+const HIT = "#";
+const MISS = ".";
+
 // ***** PROCEDURAL CODE *****
 
 const input = fs.readFileSync("./puzzleInput.txt", "utf-8");
@@ -24,6 +27,8 @@ const cpuInstructions = input.split(/\n/).map((line) => {
 });
 
 const cycleHistory = simulateInstructions(cpuInstructions);
+
+const map = generateMap(cycleHistory);
 
 // ***** FUNCTIONAL CODE *****
 
@@ -68,4 +73,29 @@ function computeAddX(currState, value) {
   secondCycle.set("X", firstCycle.get("X") + value);
 
   return [firstCycle, secondCycle];
+}
+
+function generateMap(history) {
+  const MAP_WIDTH = 40;
+  const map = [];
+  let tempMap = [];
+
+  for (let currState of history) {
+    const spriteCenter = currState.get("X");
+    const currCycle = currState.get("cycle");
+
+    let normalizedPixelToPaint = (currCycle - 1) % 40;
+
+    const dist = Math.abs(normalizedPixelToPaint - spriteCenter);
+
+    if (dist <= 1) tempMap.push(HIT);
+    else tempMap.push(MISS);
+
+    if (tempMap.length === MAP_WIDTH) {
+      map.push(tempMap);
+      tempMap = [];
+    }
+  }
+
+  return map;
 }
