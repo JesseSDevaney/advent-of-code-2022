@@ -29,6 +29,7 @@ const cpuInstructions = input.split(/\n/).map((line) => {
 const cycleHistory = simulateInstructions(cpuInstructions);
 
 const map = generateMap(cycleHistory);
+paintArr(map);
 
 // ***** FUNCTIONAL CODE *****
 
@@ -98,4 +99,10 @@ function generateMap(history) {
   }
 
   return map;
+}
+
+function paintArr(arr2D) {
+  const strMap = arr2D.map((row) => row.join("")).join("\n");
+
+  console.log(strMap);
 }
