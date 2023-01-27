@@ -50,8 +50,8 @@ function simulate(moves) {
       currTail = nextTail;
 
       simulationHistory.push({
-        currHead,
-        currTail,
+        head: currHead,
+        tail: currTail,
       });
 
       stepsRemaining--;
@@ -110,3 +110,5 @@ function moveTail(currTail, nextHead) {
 
   return nextTail;
 }
+
+function getCellsVisited() {}
