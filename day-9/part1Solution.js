@@ -1,5 +1,9 @@
 import * as fs from "node:fs";
 
+// ***** CONSTANTS *****
+const HEAD = "head";
+const TAIL = "tail";
+
 // ***** Procedural code *****
 
 const input = fs.readFileSync("./puzzleInput.txt", "utf-8");
@@ -13,7 +17,9 @@ const movesTaken = input.split(/\n/).map((move) => {
 
 const simulationHistory = simulate(movesTaken);
 
-console.log(simulationHistory);
+const cellsVisitedByTail = getCellsVisited(TAIL, simulationHistory);
+
+console.log(cellsVisitedByTail);
 
 // ***** Functional code *****
 
@@ -111,4 +117,14 @@ function moveTail(currTail, nextHead) {
   return nextTail;
 }
 
-function getCellsVisited() {}
+function getCellsVisited(knotType, history) {
+  const cellsVisited = new Set();
+
+  for (let state of history) {
+    const knotState = state[knotType];
+    const stateStr = `(${knotState.get("x")},${knotState.get("y")})`;
+    cellsVisited.add(stateStr);
+  }
+
+  return cellsVisited;
+}
