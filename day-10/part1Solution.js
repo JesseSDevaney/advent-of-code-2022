@@ -1,11 +1,13 @@
 import * as fs from "node:fs";
 
-// ***** Procedural code *****
-
-const input = fs.readFileSync("./puzzleInput.txt", "utf-8");
+// ***** CONSTANTS *****
 
 const NOOP = "noop";
 const ADD_X = "addx";
+
+// ***** PROCEDURAL CODE *****
+
+const input = fs.readFileSync("./puzzleInput.txt", "utf-8");
 
 const cpuInstructions = input.split(/\n/).map((line) => {
   if (line === NOOP)
@@ -27,7 +29,7 @@ const sumOfSignalStrength = calculateSumOfSignalStrength(cycleHistory);
 
 console.log(sumOfSignalStrength);
 
-// ***** Functional Code *****
+// ***** FUNCTIONAL CODE *****
 
 function simulateInstructions(instructions) {
   let currState = new Map([
@@ -40,9 +42,9 @@ function simulateInstructions(instructions) {
   for (const instruction of instructions) {
     const nextCycles = computeInstruction(currState, instruction);
 
-    simulationHistory.push(...nextCycles);
+    currState = nextCycles.at(-1);
 
-    currState = simulationHistory.at(-1);
+    simulationHistory.push(...nextCycles);
   }
 
   return simulationHistory;
