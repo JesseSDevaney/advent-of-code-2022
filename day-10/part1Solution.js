@@ -23,6 +23,10 @@ const cpuInstructions = input.split(/\n/).map((line) => {
 
 const cycleHistory = simulateInstructions(cpuInstructions);
 
+const sumOfSignalStrength = calculateSumOfSignalStrength(cycleHistory);
+
+console.log(sumOfSignalStrength);
+
 // ***** Functional Code *****
 
 function simulateInstructions(instructions) {
@@ -66,4 +70,19 @@ function computeAddX(currState, value) {
   secondCycle.set("X", firstCycle.get("X") + value);
 
   return [firstCycle, secondCycle];
+}
+
+function calculateSumOfSignalStrength(cycleHistory) {
+  let sum = 0;
+
+  for (let cycle of cycleHistory) {
+    const X = cycle.get("X");
+    const cycleNum = cycle.get("cycle");
+
+    if ((cycleNum - 20) % 40 === 0) {
+      sum += cycleNum * X;
+    }
+  }
+
+  return sum;
 }
