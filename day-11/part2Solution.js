@@ -18,9 +18,12 @@ console.log(monkeyBusiness);
 function simulateMonkeys(initialState, numRounds) {
   let currentState = initialState;
   const history = [initialState];
+  const allDivisors = initialState
+    .map(({ test }) => test.divisible)
+    .reduce((agg, divisor) => agg * divisor, 1);
 
   for (let round = 1; round <= numRounds; round++) {
-    const newState = simulateRound(currentState);
+    const newState = simulateRound(currentState, allDivisors);
 
     history.push(newState);
     currentState = newState;
@@ -29,7 +32,7 @@ function simulateMonkeys(initialState, numRounds) {
   return history;
 }
 
-function simulateRound(state) {
+function simulateRound(state, allDivisors) {
   const newState = cloneState(state);
 
   for (const monkey of newState) {
@@ -41,9 +44,9 @@ function simulateRound(state) {
       monkey.numInspected++;
 
       if (inspectionWorryLevel % test.divisible === 0) {
-        newState[test.true].items.push(inspectionWorryLevel);
+        newState[test.true].items.push(inspectionWorryLevel % allDivisors);
       } else {
-        newState[test.false].items.push(inspectionWorryLevel);
+        newState[test.false].items.push(inspectionWorryLevel % allDivisors);
       }
     }
   }
