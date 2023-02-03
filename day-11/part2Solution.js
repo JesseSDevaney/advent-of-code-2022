@@ -2,10 +2,11 @@ import { ADD, MULTIPLY, SQUARE, startingMonkeys } from "./puzzleInput.js";
 
 // ***** PROCEDURAL CODE *****
 
-const simulationHistory = simulateMonkeys(startingMonkeys, 20);
+const NUM_ROUNDS = 10000;
+const simulationHistory = simulateMonkeys(startingMonkeys, NUM_ROUNDS);
 
-const round20State = simulationHistory[20];
-const numItemsInspectedPerMonkey = round20State.map(
+const finalState = simulationHistory[NUM_ROUNDS];
+const numItemsInspectedPerMonkey = finalState.map(
   ({ numInspected }) => numInspected
 );
 
@@ -37,13 +38,12 @@ function simulateRound(state) {
     while (items.length > 0) {
       const item = items.shift();
       const inspectionWorryLevel = computeInspectionWorryLevel(item, operation);
-      const boredWorryLevel = computeBoredWorryLevel(inspectionWorryLevel);
       monkey.numInspected++;
 
-      if (boredWorryLevel % test.divisible === 0) {
-        newState[test.true].items.push(boredWorryLevel);
+      if (inspectionWorryLevel % test.divisible === 0) {
+        newState[test.true].items.push(inspectionWorryLevel);
       } else {
-        newState[test.false].items.push(boredWorryLevel);
+        newState[test.false].items.push(inspectionWorryLevel);
       }
     }
   }
@@ -65,10 +65,6 @@ function computeInspectionWorryLevel(item, operation) {
   if (procedure === ADD) {
     return item + val;
   }
-}
-
-function computeBoredWorryLevel(worryLevel) {
-  return Math.floor(worryLevel / 3);
 }
 
 function calculateMonkeyBusiness(numArr) {
