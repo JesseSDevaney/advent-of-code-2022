@@ -4,6 +4,7 @@ import * as fs from "node:fs";
 
 const START_POSITION = "S";
 const GOAL = "E";
+const LOWEST_ELEVATION = "a";
 
 // ***** PROCEDURE *****
 
@@ -17,14 +18,44 @@ const nodeGrid = input
     });
   });
 
-const shortestPath = findShortestPath(nodeGrid);
-console.log(shortestPath.length - 1); // subtract one for total number of moves
+const shortestTrail = findShortestTrail(nodeGrid);
+console.log(shortestTrail.length - 1);
 
 // ***** FUNCTIONS *****
 
-function findShortestPath(grid, start = START_POSITION, end = GOAL) {
+function findShortestTrail(grid, end = GOAL) {
+  // find all the nodes with elevation "a"
+  const lowestElevationNodes = grid.reduce((agg, row) => {
+    const lowestRowNodes = row.filter(({ val }) => val === LOWEST_ELEVATION);
+    return [...agg, ...lowestRowNodes];
+  }, []);
+
+  const lowestElevationPaths = lowestElevationNodes
+    .map((startingNode) => {
+      const shortestPath = findShortestPath(grid, startingNode, end);
+
+      resetGrid(grid); // reset grid after each run
+
+      return shortestPath;
+    })
+    .filter((path) => path !== null);
+
+  let shortestTrail = lowestElevationPaths.pop();
+
+  while (lowestElevationPaths.length !== 0) {
+    const path = lowestElevationPaths.pop();
+
+    if (path.length < shortestTrail.length) {
+      shortestTrail = path;
+    }
+  }
+
+  return shortestTrail;
+}
+
+function findShortestPath(grid, startingNode, end = GOAL) {
   function searchForEndNode(startNode) {
-    startNode.node = "root";
+    startNode.type = "root";
     startNode.explored = true;
 
     const searchQueue = [startNode];
@@ -47,8 +78,8 @@ function findShortestPath(grid, start = START_POSITION, end = GOAL) {
     return null; // no route found
   }
 
-  const startingNode = findStartingNode(grid, start);
   const endNode = searchForEndNode(startingNode);
+  if (!endNode) return null;
 
   const path = [endNode];
 
@@ -59,6 +90,25 @@ function findShortestPath(grid, start = START_POSITION, end = GOAL) {
   }
 
   return path;
+}
+
+function resetGrid(grid) {
+  for (let row of grid) {
+    for (let node of row) {
+      node.explored = false;
+      node.parent = null;
+      node.type = null;
+    }
+  }
+}
+
+function findShortestPathFromStartVal(
+  grid,
+  start = START_POSITION,
+  end = GOAL
+) {
+  const startingNode = findStartingNode(grid, start);
+  return findShortestPath(grid, startingNode, end);
 }
 
 function findStartingNode(arr2D, start) {
